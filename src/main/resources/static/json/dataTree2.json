@@ -1,0 +1,48 @@
+{
+  "code": 0,
+  "msg": "操作成功",
+  "data": [
+    {
+      "id": "000",
+      "title": "汽车租赁系统",
+      "checkArr": "0",
+      "parentId": "0"
+    },
+    {
+      "id": "001",
+      "title": "基础管理",
+      "checkArr": "0",
+      "parentId": "000"
+    },
+    {
+      "id": "002",
+      "title": "业务管理",
+      "checkArr": "0",
+      "parentId": "000"
+    },
+    {
+      "id": "003",
+      "title": "系统管理",
+      "checkArr": "0",
+      "parentId": "000"
+    },
+    {
+      "id": "004",
+      "title": "统计分析",
+      "checkArr": "0",
+      "parentId": "000"
+    },
+    {
+      "id": "001001",
+      "title": "客户管理",
+      "checkArr": "0",
+      "parentId": "001"
+    },
+    {
+      "id": "001002",
+      "title": "车辆管理",
+      "checkArr": "0",
+      "parentId": "001"
+    }
+  ]
+}

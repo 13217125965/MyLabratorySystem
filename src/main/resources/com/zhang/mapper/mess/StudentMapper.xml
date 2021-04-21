@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zhang.message.mapper.StuMapper">
+    <resultMap type="com.zhang.message.domain.BusStudent" id="BusStudentMap">
+        <result property="stuid" column="stuid" jdbcType="INTEGER"/>
+        <result property="studentid" column="studentid" jdbcType="VARCHAR"/>
+        <result property="stuname" column="stuname" jdbcType="VARCHAR"/>
+        <result property="stuclassid" column="stuclassid" jdbcType="VARCHAR"/>
+        <result property="stusex" column="stusex" jdbcType="INTEGER"/>
+        <result property="department" column="department" jdbcType="VARCHAR"/>
+        <result property="createtime" column="createtime" jdbcType="TIMESTAMP"/>
+    </resultMap>
+    <select id="queryAll" resultMap="BusStudentMap">
+        SELECT
+          stuid,studentid,stuname,stuclassid,stusex,department,createtime
+        FROM
+          bus_student
+        <where>
+            <if test="stuid != null and stuid != ''">
+                and stuid like concat('%',#{stuid},'%')
+            </if>
+            <if test="studentid != null and studentid != ''">
+                and studentid like concat('%',#{studentid},'%')
+            </if>
+            <if test="stuname != null and stuname != ''">
+                and stuname like concat('%',#{stuname},'%')
+            </if>
+            <if test="stuclassid != null and stuclassid != ''">
+                and stuclassid like concat('%',#{stuclassid},'%')
+            </if>
+            <if test="stusex != null">
+                and stusex = #{stusex}
+            </if>
+            <if test="department != null and department != ''">
+                and department like concat('%',#{department},'%')
+            </if>
+            <if test="createtime != null">
+                and createtime >= #{startTime}
+            </if>
+        </where>
+    </select>
+    <!--根据id查询学生信息-->
+    <select id="queryByStudentId" parameterType="String" resultMap="BusStudentMap">
+        select
+        stuid,studentid,stuname,stuclassid,stusex,department,createtime
+        from bus_student where studentid = #{studentid}
+    </select>
+    <!--新增列-->
+    <insert id="insert" keyProperty="studentid" useGeneratedKeys="true">
+        insert into bus_student(stuid,studentid,stuname,stuclassid,stusex,department,createtime)
+        values (NULL ,#{studentid}, #{stuname}, #{stuclassid}, #{stusex}, #{department},null)
+    </insert>
+    <!--通过主键修改数据-->
+    <update id="updateStudent">
+        update bus_student
+        <set>
+            <if test="stuname != null and stuname != ''">
+                stuname = #{stuname},
+            </if>
+            <if test="stuclassid != null and stuclassid != ''">
+                stuclassid = #{stuclassid},
+            </if>
+            <if test="stusex != null">
+                stusex = #{stusex},
+            </if>
+            <if test="department != null and department != ''">
+                department = #{department},
+            </if>
+            <if test="createtime != null">
+                createtime = #{createtime},
+            </if>
+        </set>
+        where studentid = #{studentid}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteByStuId">
+        delete from bus_student where studentid = #{studentid}
+    </delete>
+
+
+</mapper>

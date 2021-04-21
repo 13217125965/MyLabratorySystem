@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8">
+    <title>实验室管理</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta http-equiv="Access-Control-Allow-Origin" content="*">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <link rel="icon" href="/favicon.ico">
+    <link rel="stylesheet" href="/layui/css/layui.css" media="all"/>
+    <link rel="stylesheet" href="/css/index.css" media="all"/>
+    <link rel="stylesheet" href="/layui_ext/dtree/dtree.css">
+    <link rel="stylesheet" href="/layui_ext/dtree/font/dtreefont.css">
+</head>
+<body class="main_body">
+
+<fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+    <legend>查询条件</legend>
+</fieldset>
+<form class="layui-form" method="post" id="searchForm">
+    <div class="layui-form-item">
+        <div class="layui-inline">
+            <label class="layui-form-label">实验室编号:</label>
+            <div class="layui-input-inline">
+                <input type="text" name="roomnumber" lay-verify="title" placeholder="请输入实验室编号" autocomplete="off"
+                       class="layui-input">
+            </div>
+        </div>
+        <div class="layui-inline">
+            <label class="layui-form-label">实验室名称:</label>
+            <div class="layui-input-inline">
+                <input type="text" name="roomname" lay-verify="title" placeholder="请输入实验室名称" autocomplete="off"
+                       class="layui-input">
+            </div>
+        </div>
+        <div class="layui-inline">
+            <label class="layui-form-label">实验室类型:</label>
+            <div class="layui-input-inline">
+                <input type="text" name="roomtype" lay-verify="title" placeholder="请输入实验室类型" autocomplete="off"
+                       class="layui-input">
+            </div>
+        </div>
+
+    </div>
+    <div class="layui-form-item">
+        <div class="layui-inline">
+            <label class="layui-form-label">所属学院:</label>
+            <div class="layui-input-inline">
+                <input type="text" name="department" lay-verify="title" placeholder="请输入所属学院" autocomplete="off"
+                       class="layui-input">
+            </div>
+        </div>
+        <div class="layui-inline">
+            <label class="layui-form-label">操作人:</label>
+            <div class="layui-input-inline">
+                <input type="text" name="admin" lay-verify="title" placeholder="请输入操作人" autocomplete="off"
+                       class="layui-input">
+            </div>
+        </div>
+        <div class="layui-inline">
+            <label class="layui-form-label">是否空闲:</label>
+            <div class="layui-input-inline">
+                <input type="radio" name="isusing" value="1" title="使用中">
+                <input type="radio" name="isusing" value="0" title="空闲中">
+            </div>
+        </div>
+        <div class="layui-inline">
+            <div class="layui-input-inline">
+                <button type="button" class="layui-btn  layui-btn-normal  search-submit">
+                    <i class="layui-icon layui-icon-search"></i>查询
+                </button>
+                <button type="reset" class="layui-btn  layui-btn-warm ">
+                    <i class="layui-icon layui-icon-refresh"></i>重置
+                </button>
+            </div>
+        </div>
+
+    </div>
+</form>
+
+<table class="layui-hide" id="test" lay-filter="test"></table>
+
+<script type="text/html" id="toolbarDemo">
+    <div class="layui-btn-container">
+        <button class="layui-btn layui-btn-sm" lay-event="getAddData">添加</button>
+        <button class="layui-btn layui-btn-danger layui-btn-sm" lay-event="deleteBatch">批量删除</button>
+    </div>
+</script>
+
+<div style="display: none;padding: 20px" id="dataGrip">
+    <form class="layui-form" method="post" id="dataForm" lay-filter="dataForm">
+        <div class="layui-col-md9" style="padding-right: 20px;">
+            <div class="layui-form-item">
+                <label class="layui-form-label">实验室编号:</label>
+                <div class="layui-input-block">
+                    <input type="text" name="roomnumber" lay-verify="true" autocomplete="off" placeholder=""
+                           class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">实验室名称:</label>
+                <div class="layui-input-block">
+                    <input type="text" name="roomname" lay-verify="true" autocomplete="off" placeholder=""
+                           class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">实验室类型:</label>
+                <div class="layui-input-block">
+                    <input type="text" name="roomtype" lay-verify="true" autocomplete="off" placeholder=""
+                           class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">所属学院:</label>
+                <div class="layui-input-block">
+                    <input type="text" name="department" lay-verify="true" autocomplete="off" placeholder=""
+                           class="layui-input">
+                </div>
+            </div>
+            <br>
+        </div>
+        <div class="layui-col-md3">
+            <div class="layui-form-item">
+                <div class="layui-upload">
+                    <div class="layui-upload-list">
+                        <!--隐藏 添加汽车时的图片名称-->
+                        <input name="roomimg" id="roomimg" type="hidden">
+                        <img src="" style="height: 160px;width: 160px" class="layui-upload-img" name="upload" id="roomSrc">
+                        <p id="demoText"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">实验室简介:</label>
+            <div class="layui-input-block">
+                <input type="text" name="description" lay-verify="true" autocomplete="off" placeholder=""
+                       class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-inline">
+                <label class="layui-form-label">操作人:</label>
+                <div class="layui-input-block">
+                    <input type="text" name="admin" lay-verify="name" autocomplete="off" placeholder=""
+                           class="layui-input">
+                </div>
+            </div>
+            <div class="layui-inline">
+                <label class="layui-form-label">联系方式:</label>
+                <div class="layui-input-block">
+                    <input type="text" name="adminphone" lay-verify="" autocomplete="off" placeholder=""
+                           class="layui-input">
+                </div>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-inline">
+                <label class="layui-form-label">地具体址:</label>
+                <div class="layui-input-block">
+                    <input type="text" name="roomaddress" lay-verify="" autocomplete="off" placeholder=""
+                           class="layui-input">
+                </div>
+            </div>
+            <div class="layui-inline">
+                <label class="layui-form-label">是否空闲</label>
+                <div class="layui-input-block">
+                    <input type="radio" name="isusing" value="1" title="使用中">
+                    <input type="radio" name="isusing" value="0" title="空闲中" checked="">
+                </div>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <div style="text-align: center">
+                <button type="submit" class="layui-btn layui-btn-warm" lay-submit=""
+                        lay-filter="demo1">
+                    <span class="layui-icon">&#xe609;</span>
+                    提交
+                </button>
+                <button type="reset" class="layui-btn layui-btn-normal">
+                    <span class="layui-icon">&#x1007;</span>
+                    重置
+                </button>
+                <button type="button" class="layui-btn" id="test1">上传图片</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+
+<!--  行工具条  -->
+<script type="text/html" id="barDemo">
+    <a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="edit">编辑</a>
+    <a class="layui-btn layui-btn-danger layui-btn-xs layui-btn-normal" lay-event="del">删除</a>
+    <a class="layui-btn layui-btn-xs layui-btn-warm" lay-event="showCar">查看大图</a>
+</script>
+
+
+<script type="text/javascript" src="/layui/layui.js"></script>
+
+<script>
+    var tableForm;
+    var layerUrl;
+    layui.use(['table', 'form','upload', 'layer'], function () {
+        var table = layui.table
+            , $ = layui.$
+            , layer = layui.layer
+            , form = layui.form
+            ,upload = layui.upload;
+
+
+        tableForm = table.render({
+            elem: '#test'
+            , url: '/messRoom/loadRoomList'
+            , toolbar: '#toolbarDemo' //开启头部工具栏，并为其绑定左侧模板
+            , defaultToolbar: ['filter', 'exports', 'print']
+            , title: '用户数据表'
+            , cols: [
+                [
+                    {type: 'checkbox', fixed: 'left'}
+                    , {field: 'roomnumber', title: '实验室编号', fixed: 'left', align: 'center',width:105}
+                    , {field: 'roomname', title: '实验室名称', align: 'center',width:140}
+                    , {field: 'roomtype', title: '实验室类型', align: 'center',width:110}
+                    , {field: 'department', title: '所属学院', align: 'center',width:110}
+                    , {field: 'roomaddress', title: '实验室地址', align: 'center',width:120}
+                    , {
+                    field: 'isusing', title: '是否空闲', align: 'center',width:100,templet: function (res) {
+                        return res.isusing == 1 ? '<em style="color: red">使用中</em>' : '<em style="color: blue">空闲中</em>'
+                    }
+                }
+                    , {field: 'description', title: '实验室简介', align: 'center',width:200}
+                    , {
+                    field: 'roomimg', title: '缩略图', align: 'center',width:100, templet: function (res) {
+                        return '<img src="/roomimgs/' + res.roomimg + '" style="height:30px;width:45px">'
+                    }
+                }
+                    , {field: 'admin', title: '操作人', align: 'center',width:110}
+                    , {field: 'adminphone', title: '操作人联系方式', align: 'center',width:130}
+                    , {fixed: 'right', title: '操作', toolbar: '#barDemo', align: 'center',width : '190'}
+                ]
+            ]
+            , page: true
+            , id: 'dataId' //添加id属性
+        });
+
+
+        //模糊搜索
+        $(".search-submit").click(function () {
+            var param = $("#searchForm").serialize()
+            tableForm.reload({
+                url: "/messRoom/loadRoomList?" + param
+                , page: {curr: 1}
+            })
+        })
+
+        var layerIndex;
+
+
+        //头工具栏事件
+        table.on('toolbar(test)', function (obj) {
+            var even = obj.event;
+            switch (even) {
+                case 'getAddData':
+                    addRoom();
+                    break;
+                case 'deleteBatch':
+                    deleteBatch();
+                    break;
+            }
+
+            //批量删除
+            function deleteBatch() {
+                //获取所选项的id值
+                var checkStatus = table.checkStatus('dataId'),
+                    data = checkStatus.data;
+                if (data.length == 0) {
+                    //判断是否有勾选项
+                    layer.alert("请先勾选",{icon:2})
+                } else {
+                    for (var i = 0; i <= data.length; i++) {
+                        if (data[i].isusing == 1) {
+                            layer.msg("请取消勾选重在使用的实验室")
+                            break;
+                        } else {
+                            layer.confirm("确定删除以下所选项吗？", function (index) {
+                                var params;
+                                $.each(data, function (index, item) {
+                                    if (index == 0) {
+                                        params = "roomnumbers=" + item.roomnumber
+                                    } else {
+                                        params += "&roomnumbers=" + item.roomnumber
+                                    }
+
+                                })
+                                //发送ajax请求
+                                $.post('/messRoom/deleteRoomBatch', params, function (res) {
+                                    layer.alert(res.msg,{icon:2})
+                                    //重置表单
+                                    tableForm.reload()
+                                })
+                            })
+                            break;
+                        }
+                    }
+
+                }
+
+            }
+
+            //添加汽车信息
+            function addRoom() {
+                layerIndex = layer.open({
+                    type: 1,
+                    title: '添加新的实验室信息',
+                    content: $('#dataGrip'),
+                    area: ['800px', '550px'],
+                    success: function () {
+                        //把数据清空
+                        $("#dataForm")[0].reset()
+                        layerUrl = '/messRoom/addRoom';
+                        //图片上传
+                        //执行实例
+                        var uploadInst = upload.render({
+                            elem: '#test1' //绑定元素
+                            ,url: '/roomFile/insertRoomImg' //上传接口
+                            ,auto: false//一定要写这个,不写会自动触发上传
+                            //选择文件后的回调
+                            ,choose: function(obj){
+                                //预读本地文件，如果是多文件，则会遍历。(不支持ie8/9)
+                                obj.preview(function(index, file, result){
+                                    //获取图片名字
+                                    // console.log(file.name)
+                                    $('#carSrc').attr('src', result); //获取本地图片链接 预览
+                                    obj.upload(index,file);
+
+                                });
+                            }
+                            // ,data:{
+                            //     "carimg":carimg,
+                            //     "carnumber":data.carnumber
+                            // }
+                            //上传完毕回调
+                            ,done: function(res){
+                                //获取后台生成的图片名称
+                                var roomimg = res.data.src;
+                                //将前面的路径截取掉
+                                var newRoomImg = roomimg.substr(15);
+                                //赋值给表单
+                                $('#roomimg').val(newRoomImg);
+                                //上传完毕回调
+                                layer.msg("图片上传成功")
+                                //重新加载表格
+                                tableForm.reload();
+                            }
+                            //请求异常回调
+                            ,error: function(){
+                                //请求异常回调
+                                layer.msg("上传失败")
+                            }
+                        });
+                    }
+                })
+            }
+        });
+
+
+        //提交数据
+        form.on("submit(demo1)", function () {
+            var params = $("#dataForm").serialize();
+            console.log(params)
+            console.log(layerUrl)
+            $.post(layerUrl, params, function (obj) {
+                // 关闭弹出层
+                // layer.close(layerIndex)
+                // 刷新表格
+                tableForm.reload();
+                layer.alert(obj.msg,{icon:2})
+            })
+        })
+
+
+        //监听行工具事件
+        table.on('tool(test)', function (obj) {
+            var data = obj.data;
+            if (obj.event === 'del') {
+                if (data.isrenting == 1) {
+                    layer.alert("该实验室正在使用中,不可删除",{icon:1})
+                } else {
+                    layer.confirm('确定要删除实验室编号为:【' + data.roomnumber + '】的实验室吗？', function (index) {
+                        $.post("/messRoom/deleteRoom", {roomnumber: data.roomnumber}, function (res) {
+                            layer.alert(res.msg,{icon:2})
+                            //重新加载表格
+                            tableForm.reload();
+                        })
+                    });
+                }
+            } else if (obj.event === 'edit') {
+                openUpdatePage(data);   //编辑车辆信息
+            } else if (obj.event === 'showRoom') {
+                showBigCar(data);   //查看大图
+            }
+        });
+
+
+        //修改车辆信息方法
+        function openUpdatePage(data) {
+            layerIndex = layer.open({
+                type: 1,
+                title: '修改车辆信息',
+                content: $('#dataGrip'),
+                area: ['750px', '500px'],
+                success: function () {
+                    //填充数据    data为后台查询来的数据
+                    form.val("dataForm", data)
+                    $("#carSrc").attr("src", "/roomimgs/" + data.roomimg)
+                    layerUrl = '/messRoom/updateRoom';
+                    //图片上传
+                    //执行实例
+                    var carimgs;
+                    var uploadInst = upload.render({
+                        elem: '#test1' //绑定元素
+                        ,url: '/roomFile/updateRoomImg' //上传接口
+                        ,auto: false//一定要写这个,不写会自动触发上传
+                        //选择文件后的回调
+                        ,choose: function(obj){
+                            //预读本地文件，如果是多文件，则会遍历。(不支持ie8/9)
+                            obj.preview(function(index, file, result){
+                                //获取图片名字
+                                console.log(file.name)
+                                $('#roomSrc').attr('src', result); //获取本地图片链接 预览
+                                obj.upload(index,file);
+                                roomimgs == file.name;
+                            });
+                        }
+                        ,data:{
+                            "roomimg":carimgs,
+                            "roomnumber":data.carnumber
+                        }
+                        //上传完毕回调
+                        ,done: function(res){
+                            //上传完毕回调
+                            layer.msg("图片上传成功")
+                            //重新加载表格
+                            tableForm.reload();
+                        }
+                        //请求异常回调
+                        ,error: function(){
+                            //请求异常回调
+                            layer.msg("上传失败")
+                        }
+                    });
+                }
+            })
+
+        }
+
+        //查看车辆大图
+        function showBigCar(data) {
+            layerIndex = layer.open({
+                type: 1,
+                title: '【' + data.roomnumber + '】的预览图',
+                content: '<img src="/roomimgs/' + data.roomimg + '"style="height:430px;width:727px;padding: 10px;">',
+                area: ['750px', '500px']
+            })
+        }
+
+
+
+        $(".statusoption").click(function () {
+            $(this).children().toggle();
+        })
+        $('body').click(function(e) {
+            if(e.target.type != 'button')
+                if ( $('.tipse').is(':visible') ) {
+                    $('.tipse').hide();
+                }
+        })
+    });
+
+
+</script>
+</body>
+</html>
+
+

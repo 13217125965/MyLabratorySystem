@@ -1,0 +1,33 @@
+#端口号
+server:
+  port: 8080
+
+#数据源配置
+spring:
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource
+    url: jdbc:mysql:///laboratory?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC&zeroDateTimeBehavior=convertToNull&useSSL=false
+    driver-class-name: com.mysql.jdbc.Driver
+    username: root
+    password: root
+    filters: stat
+    maxActive: 10
+  thymeleaf:
+    cache: false
+
+mybatis:
+  mapper-locations: classpath:com/zhang/mapper/*/*.xml #配置mapper位置
+#日志
+logging:
+#  日志等级
+  level:
+    com:
+      zhang:
+        sys:
+          mapper: debug
+#分页
+pagehelper:
+#  指定数据库方言
+  helperDialect: mysql
+#  合理化分页
+  reasonable: true

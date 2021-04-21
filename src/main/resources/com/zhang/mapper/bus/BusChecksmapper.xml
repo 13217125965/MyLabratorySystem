@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zhang.bus.mapper.BusChecksMapper">
+
+    <resultMap type="com.zhang.bus.domain.BusChecks" id="BusChecksMap">
+        <result property="checkid" column="checkid" jdbcType="VARCHAR"/>
+        <result property="checkdate" column="checkdate" jdbcType="TIMESTAMP"/>
+        <result property="checkdesc" column="checkdesc" jdbcType="VARCHAR"/>
+        <result property="checkproblem" column="checkproblem" jdbcType="VARCHAR"/>
+        <result property="admin" column="admin" jdbcType="VARCHAR"/>
+        <result property="rentid" column="rentid" jdbcType="VARCHAR"/>
+        <result property="createtime" column="createtime" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="BusChecksMap">
+        select
+        checkid, checkdate, checkdesc, checkproblem, admin, rentid, createtime
+        from laboratory.bus_checks
+        where checkid = #{checkid}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="BusChecksMap">
+        select
+        checkid, checkdate, checkdesc, checkproblem, admin, rentid, createtime
+        from laboratory.bus_checks
+        limit #{offset}, #{limit}
+    </select>
+
+    <!--通过实体作为筛选条件查询-->
+    <select id="queryAll" resultMap="BusChecksMap">
+        select
+          checkid, checkdate, checkdesc, checkproblem, admin, rentid, createtime
+        from laboratory.bus_checks
+        <where>
+            <if test="checkid != null and checkid != ''">
+                and checkid = #{checkid}
+            </if>
+            <if test="checkdate != null">
+                and checkdate = #{checkdate}
+            </if>
+            <if test="checkdesc != null and checkdesc != ''">
+                and checkdesc = #{checkdesc}
+            </if>
+            <if test="checkproblem != null and checkproblem != ''">
+                and checkproblem = #{checkproblem}
+            </if>
+            <if test="admin != null and admin != ''">
+                and admin = #{admin}
+            </if>
+            <if test="rentid != null and rentid != ''">
+                and rentid = #{rentid}
+            </if>
+            <if test="createtime != null">
+                and createtime
+                -<![CDATA[
+                    <=
+                ]]>
+                #{createtime}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="checkid" useGeneratedKeys="true">
+        insert into laboratory.bus_checks(checkdate, checkdesc, checkproblem, admin, rentid, createtime)
+        values (#{checkdate}, #{checkdesc}, #{checkproblem}, #{admin}, #{rentid}, #{createtime})
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update laboratory.bus_checks
+        <set>
+            <if test="checkdate != null">
+                checkdate = #{checkdate},
+            </if>
+            <if test="checkdesc != null and checkdesc != ''">
+                checkdesc = #{checkdesc},
+            </if>
+            <if test="checkproblem != null and checkproblem != ''">
+                checkproblem = #{checkproblem},
+            </if>
+            <if test="admin != null and admin != ''">
+                admin = #{admin},
+            </if>
+            <if test="rentid != null and rentid != ''">
+                rentid = #{rentid},
+            </if>
+        </set>
+        where checkid = #{checkid}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from laboratory.bus_checks where checkid = #{checkid}
+    </delete>
+
+</mapper>
+

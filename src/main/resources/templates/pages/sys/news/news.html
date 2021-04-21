@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html  xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8">
+    <title>系统公告管理</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta http-equiv="Access-Control-Allow-Origin" content="*">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <link rel="icon" href="/favicon.ico">
+    <link rel="stylesheet" href="/layui/css/layui.css" media="all" />
+</head>
+<body class="main_body">
+<form class="layui-form" id="searchForm" method="get">
+    <fieldset class="layui-elem-field layui-field-title" style="margin-top: 30px;">
+        <legend>查询条件</legend>
+    </fieldset>
+    <div class="layui-inline">
+        <label class="layui-form-label">公告标题:</label>
+        <div class="layui-input-block">
+            <input type="text" name="title" lay-verify="true" autocomplete="off" placeholder="请输入公告标题" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-inline">
+        <label class="layui-form-label">公告内容:</label>
+        <div class="layui-input-block">
+            <input type="text" name="content" lay-verify="true" autocomplete="off" placeholder="请输入公告内容" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-inline">
+        <label class="layui-form-label">发布时间:</label>
+        <div class="layui-input-block">
+            <input type="text" name="startTime" class="layui-input" id="startTime" placeholder="yyyy-MM-dd">
+        </div>
+    </div>
+    <div class="layui-inline">
+        <label class="layui-form-label">操作人员:</label>
+        <div class="layui-input-block">
+            <input type="text" name="opername" lay-verify="true" autocomplete="off" placeholder="请输入操作人员" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-inline" style="margin-left: 30px">
+        <button type="button" class="layui-btn layui-btn-normal" id="newsBtn">
+            <span class="layui-icon">&#xe615;</span>
+            查询
+        </button>
+        <button type="reset" class="layui-btn layui-btn-warm" >
+            <span class="layui-icon">&#xe669;</span>
+            重置
+        </button>
+    </div>
+</form>
+
+<!--    顶部条件查询end    -->
+
+<!-- 数据列表 -->
+<table class="layui-hide" id="test" lay-filter="test"></table>
+
+<!--列表工具栏-->
+<div style="display: none" id="barDemo">
+    <a class="layui-btn layui-btn layui-btn-xs" lay-event="update">编辑</a>
+    <a class="layui-btn layui-btn-warm layui-btn-xs" lay-event="select">查看</a>
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="delete">删除</a>
+</div>
+
+<!--列表头部工具栏-->
+<script type="text/html" id="toolbarDemo">
+    <div id="addDiv">
+        <button lay-event="addNews" class="layui-btn">新增公告</button>
+        <button lay-event="deleteBatch" class="layui-btn layui-btn-danger">批量删除</button>
+    </div>
+</script>
+
+<!--弹出层-->
+<div style="display: none;padding-right: 20px;padding-top: 30px;" id="dataGrip">
+    <form class="layui-form" method="post" id="dataForm" lay-filter="dataForm">
+        <input type="hidden" name="id">
+        <div class="layui-form-item">
+            <label class="layui-form-label">公告标题:</label>
+            <div class="layui-input-block">
+                <input type="text" name="title" lay-verify="true" autocomplete="off" placeholder="请输入公告标题" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item layui-form-text">
+            <label class="layui-form-label">公告内容</label>
+            <div class="layui-input-block">
+                <textarea class="layui-textarea" name="content" lay-verify="content" id="LAY_demo_editor"></textarea>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="" style="text-align: center">
+                <button type="submit" class="layui-btn layui-btn-warm layui-btn-radius" lay-submit="" lay-filter="demo1">
+                    <span class="layui-icon">&#xe609;</span>
+                    提交
+                </button>
+                <button type="reset" class="layui-btn layui-btn-normal layui-btn-radius">
+                    <span class="layui-icon">&#xe669;</span>
+                    重置
+                </button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<div style="display: none;padding-right: 20px;padding-top: 30px;" id="selectNews">
+    <h1 style="text-align: center">公告内容 <span class="layui-icon" style="font-size: 40px">&#xe645;</span> </h1>
+    </br>
+    <h2 id="newsContent" style="text-align: center"></h2>
+    <fieldset class="layui-elem-field layui-field-title" style="margin-top: 30px;"></fieldset>
+    <div style="text-align: right">
+        发布人:<span id="newsName"></span>&emsp;&emsp;发布时间:<span id="newsTime"></span>
+    </div>
+    <fieldset class="layui-elem-field layui-field-title" style="margin-top: 30px;"></fieldset>
+</div>
+
+<script src="/layui/layui.js"></script>
+<script>
+    //一般直接写在一个js文件中
+    //引入dtree
+    layui.use(['layer','table','layedit','laydate','form','jquery'], function(){
+        var layer = layui.layer
+            ,form = layui.form
+            ,$ = layui.jquery
+            ,table = layui.table
+            ,laydate = layui.laydate
+            ,layedit = layui.layedit;
+
+        //创建一个编辑器
+        var editIndex;
+        editIndex = layedit.build('LAY_demo_editor', {
+            height: 150,
+            tool: [
+                'strong' //加粗
+                ,'italic' //斜体
+                ,'underline' //下划线
+                ,'del' //删除线
+
+                ,'|' //分割线
+
+                ,'left' //左对齐
+                ,'center' //居中对齐
+                ,'right' //右对齐
+                ,'link' //超链接
+                ,'unlink' //清除链接
+                ,'face' //表情
+                ,'image' //插入图片
+                ,'help' //帮助
+            ]
+        });
+        // 编辑框 图片上传
+        layedit.set({
+            uploadImage: {
+                url: '' //接口url
+                ,type: '' //默认post
+            }
+        });
+
+        laydate.render({
+            //指定日期input框的id值
+            elem: '#startTime',
+            type: 'datetime'
+        });
+
+
+
+        let tableForm = table.render({
+            elem: '#test'
+            ,url:'/sysNews/findAllNews'
+            ,toolbar:'#toolbarDemo'
+            ,totalRow:true
+            ,cellMinWidth:80
+            ,id: 'dataId'   //定义id值
+            // ,page: true
+            ,page: { //支持传入 laypage 组件的所有参数（某些参数除外，如：jump/elem） - 详见文档
+                layout: ['limit', 'count', 'prev', 'page', 'next', 'skip'] //自定义分页布局
+                ,curr: 1 //设定初始在第 2 页
+                ,groups: 3 //只显示 1 个连续页码
+                ,first: false //不显示首页
+                ,last: false //不显示尾页
+                ,limit: 10 //每页显示条数
+            }
+            ,method:'get'
+            ,cols: [
+                [
+                    {type:'checkbox'}
+                    ,{field:'id', title: 'ID',align:'center'}
+                    ,{field:'title', title: '公告标题',align:'center'}
+                    ,{field:'createtime', title: '发布时间',align:'center'}
+                    ,{field:'opername', title: '发布人',align:'center'}
+                    ,{title:'操作',templet:'#barDemo',align:'center'}
+                ]
+            ]
+        });
+
+
+        //模糊搜索
+        $("#newsBtn").click(function() {
+            var param= $("#searchForm").serialize();
+            tableForm.reload({
+                url:"/sysNews/findAllNews?"+param
+                ,page:{curr:1}
+            })
+        })
+
+
+
+        //提交数据
+        form.on("submit(demo1)",function() {
+            layedit.sync(editIndex); // 同步编辑器的内容到textarea( 一般用于异步提交)
+            // params: 序列化表单,得到数据
+            var params = $('#dataForm').serialize();
+            $.post(layerUrl,params,function(obj) {
+                layer.alert(obj.msg,{icon:1});
+                tableForm.reload();
+            })
+        })
+
+
+        //头工具栏事件
+        table.on('toolbar(test)', function(obj){
+            console.log(obj);
+            var even = obj.event;
+            switch (even) {
+                case 'deleteBatch':deleteBatch();
+                    break;
+                case 'addNews':addNews();
+                    break;
+            }
+        });
+
+        //添加公告
+        function addNews(){
+            layer.open({
+                type:1,
+                title:'新增公告',
+                content: $('#dataGrip'),
+                area: ['800px', '530px'],
+                success:function() {
+                    //每次打开弹出层时,清空弹出层的信息
+                    $("#dataForm")[0].reset();
+                    editIndex = layedit.build('LAY_demo_editor')
+                    layerUrl='/sysNews/addNews';
+                }
+            })
+        }
+        //批量删除
+        function deleteBatch(){
+            //判断是否为空(有无勾选项) 根据table定义的id值获取勾选数量
+            var checkStatus = table.checkStatus('dataId'),data = checkStatus.data;
+            if (data.length == 0){
+                layer.alert('未选中',{icon:0});
+            }else {
+                //获取所选项的id值
+
+                layer.confirm("你确定删除以下选中的公告吗",function (index) {
+                    var params;
+                    //jquery遍历      index:索引值  item:数据
+                    $.each(data,function (index,item) {
+                        if (index == 0){
+                            params = "ids="+item.id;
+                        }else {
+                            params = params+"&ids="+item.id;
+                        }
+                    })
+                    //发送ajax请求
+                    $.post('/sysNews/deleteNewsBatch',params,function (res) {
+                        layer.alert(res.msg,{icon:1})
+                        tableForm.reload();
+                    })
+                })
+            }
+
+
+        }
+
+
+        //监听工具条
+        table.on('tool(test)', function(obj){ //注：tool 是工具条事件名，test 是 table 原始容器的属性 lay-filter="对应的值"
+            var data = obj.data; //获得当前行数据
+            var layEvent = obj.event; //获得 lay-event 对应的值（也可以是表头的 event 参数对应的值）
+            //修改
+            if(layEvent === 'update'){
+                update(data)
+            }else if (layEvent === 'select'){   //查看
+                select(data)
+            }else if (layEvent === 'delete'){   //删除
+                layer.confirm('确定删除公告吗', function(index){
+                    obj.del(); //删除对应行（tr）的DOM结构，并更新缓存
+                    layer.close(index);
+                    //向服务端发送删除指令
+                    deleteNews(data);
+                });
+            }
+        });
+
+        //修改公告
+        function update(data){
+            layer.open({
+                type:1,
+                title:'修改公告',
+                content: $('#dataGrip'),
+                area: ['800px', '530px'],
+                success:function() {
+                    form.val("dataForm",data);  //表单赋值
+                    editIndex = layedit.build('LAY_demo_editor')
+                    layerUrl='/sysNews/updateNews';
+                }
+            })
+        }
+
+
+        //删除当前日志信息
+        function deleteNews(data){
+            var id = data.id
+            $.post("/sysNews/deleteNewsById",{id:id},function(obj) {
+                layer.alert(obj.msg,{icon:1})
+                //重载表格
+                tableForm.reload();
+            })
+        }
+
+        //查看公告
+        function select(data){
+            layer.open({
+                type:1,
+                title:'查看公告',
+                content: $('#selectNews'),
+                area: ['800px', '530px'],
+                success:function() {
+                    $("#newsContent").html(data.content)
+                    $("#newsName").html(data.opername)
+                    $("#newsTime").html(data.createtime)
+                    form.val("dataForm",data);  //表单赋值
+                }
+            })
+        }
+
+
+
+    });
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zhang.message.mapper.RoomMapper">
+    <resultMap type="com.zhang.message.domain.BusRoom" id="BusRoomMap">
+        <result property="roomid" column="roomid" jdbcType="INTEGER"/>
+        <result property="roomnumber" column="roomnumber" jdbcType="VARCHAR"/>
+        <result property="roomname" column="roomname" jdbcType="VARCHAR"/>
+        <result property="roomtype" column="roomtype" jdbcType="VARCHAR"/>
+        <result property="department" column="department" jdbcType="VARCHAR"/>
+        <result property="roomaddress" column="roomaddress" jdbcType="VARCHAR"/>
+        <result property="isusing" column="isusing" jdbcType="INTEGER"/>
+        <result property="description" column="description" jdbcType="VARCHAR"/>
+        <result property="roomimg" column="roomimg" jdbcType="VARCHAR"/>
+        <result property="admin" column="admin" jdbcType="VARCHAR"/>
+        <result property="adminphone" column="adminphone" jdbcType="VARCHAR"/>
+    </resultMap>
+    <!--通过实体作为筛选条件查询-->
+    <select id="queryAll" resultMap="BusRoomMap">
+        select
+        roomid, roomnumber, roomname, roomtype, department, roomaddress, isusing, description, roomimg, admin, adminphone
+        from bus_room
+        <where>
+            <if test="roomnumber != null and roomnumber != ''">
+                and roomnumber like concat('%',#{roomnumber},'%')
+            </if>
+            <if test="roomname != null and roomname != ''">
+                and roomname like concat('%',#{roomname},'%')
+            </if>
+            <if test="roomtype != null and roomtype != ''">
+                and roomtype like concat('%',#{roomtype},'%')
+            </if>
+            <if test="department != null and department != ''">
+                and department like concat('%',#{department},'%')
+            </if>
+
+            <if test="isusing != null">
+                and isusing = #{isusing}
+            </if>
+
+            <if test="admin != null and admin != ''">
+                and admin like concat('%',#{admin},'%')
+            </if>
+        </where>
+    </select>
+
+    <!--出租条件查询-->
+    <select id="queryByType" resultMap="BusRoomMap">
+        select
+         roomid, roomnumber, roomname, roomtype, department, roomaddress, isusing, description, admin, adminphone
+        from bus_room where isusing = #{isusing}
+    </select>
+
+    <select id="queryRoomByRoomNum" parameterType="String" resultMap="BusRoomMap">
+        select
+         roomid, roomnumber, roomname, roomtype, department, roomaddress, isusing, description, admin, adminphone
+        from bus_room where roomnumber = #{roomnumber}
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" parameterType="com.zhang.message.vo.RoomVo">
+        insert into bus_room(roomid, roomnumber, roomname, roomtype, department, roomaddress, isusing, description ,roomimg, admin, adminphone)
+        values (#{roomid},#{roomnumber}, #{roomname}, #{roomtype}, #{department}, #{roomaddress}, #{isusing}, #{description} ,#{roomimg}, #{admin},#{adminphone})
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update bus_room
+        <set>
+            <if test="roomname != null and roomname != ''">
+                roomname = #{roomname},
+            </if>
+            <if test="roomtype != null and roomtype != ''">
+                roomtype = #{roomtype},
+            </if>
+            <if test="department != null and department != ''">
+                department = #{department},
+            </if>
+            <if test="roomaddress != null and roomaddress != ''">
+                roomaddress = #{roomaddress},
+            </if>
+            <if test="isusing != null">
+                isusing = #{isusing},
+            </if>
+            <if test="description != null and description != ''">
+                description = #{description},
+            </if>
+            <if test="admin != null and admin != ''">
+                admin = #{admin},
+            </if>
+            <if test="adminphone != null and adminphone != ''">
+                adminphone = #{adminphone},
+            </if>
+        </set>
+        where roomnumber = #{roomnumber}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="delete">
+        delete from bus_room where roomnumber = #{roomnumber}
+    </delete>
+
+
+
+
+
+</mapper>

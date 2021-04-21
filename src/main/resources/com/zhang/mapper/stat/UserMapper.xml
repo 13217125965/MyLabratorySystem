@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zhang.stat.mapper.StudentSexMapper">
+
+    <resultMap type="com.zhang.stat.domain.AddressSex" id="statMap">
+        <result property="stusex" column="stusex" jdbcType="INTEGER"/>
+        <result property="count" column="count" jdbcType="INTEGER"/>
+    </resultMap>
+    <select id="selectAddressSex" resultMap="statMap">
+        select
+        stusex , count(stusex)
+        as count from (select * from bus_student where department = #{department})
+        as t group by stusex
+    </select>
+</mapper>

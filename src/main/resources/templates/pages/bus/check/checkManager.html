@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8">
+    <title>检查单管理</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta http-equiv="Access-Control-Allow-Origin" content="*">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <link rel="icon" href="/favicon.ico">
+    <link rel="stylesheet" href="/layui/css/layui.css" media="all"/>
+    <link rel="stylesheet" href="/css/index.css" media="all"/>
+    <link rel="stylesheet" href="/layui_ext/dtree/dtree.css">
+    <link rel="stylesheet" href="/layui_ext/dtree/font/dtreefont.css">
+</head>
+<body class="main_body">
+
+<fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+    <legend>查询条件</legend>
+</fieldset>
+<form class="layui-form" method="post" id="searchForm">
+    <div class="layui-form-item">
+        <div class="layui-inline">
+            <label class="layui-form-label">检查单号:</label>
+            <div class="layui-input-inline">
+                <input type="text" name="checkid" lay-verify="title" placeholder="请输入检查单号" autocomplete="off"
+                       class="layui-input">
+            </div>
+        </div>
+        <div class="layui-inline">
+            <label class="layui-form-label">存在问题:</label>
+            <div class="layui-input-inline">
+                <input type="text" name="checkproblem" lay-verify="title" placeholder="请输入存在问题" autocomplete="off"
+                       class="layui-input identity">
+            </div>
+        </div>
+        <div class="layui-inline">
+            <label class="layui-form-label">问题描述:</label>
+            <div class="layui-input-inline">
+                <input type="text" name="checkdesc" lay-verify="title" placeholder="问题描述" autocomplete="off"
+                       class="layui-input">
+            </div>
+        </div>
+
+    </div>
+    <div class="layui-form-item">
+        <div class="layui-inline">
+            <label class="layui-form-label">借出单号:</label>
+            <div class="layui-input-inline">
+                <input type="text" name="rentid" placeholder="请输入借用单号" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-inline">
+            <label class="layui-form-label">开始时间:</label>
+            <div class="layui-input-inline">
+                <input type="text" name="checkTime" placeholder="请输入开始时间" class="layui-input"  id="test1">
+            </div>
+        </div>
+        <div class="layui-inline">
+            <label class="layui-form-label">结束时间:</label>
+            <div class="layui-input-inline">
+                <input type="text" name="createTime" placeholder="请输入结束时间" class="layui-input"  id="test2">
+            </div>
+        </div>
+        <div class="layui-inline">
+            <div class="layui-input-inline">
+                <button type="button" class="layui-btn  layui-btn-normal  search-submit">
+                    <i class="layui-icon layui-icon-search"></i>查询
+                </button>
+                <button type="reset" class="layui-btn  layui-btn-warm ">
+                    <i class="layui-icon layui-icon-refresh"></i>重置
+                </button>
+            </div>
+        </div>
+    </div>
+</form>
+
+<table class="layui-hide" id="test" lay-filter="test"></table>
+
+<div style="display: none;padding: 20px" id="dataGrip">
+    <form class="layui-form" method="post" id="dataForm" lay-filter="dataForm">
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">检查单号:</label>
+            <div class="layui-input-block">
+                <input type="text" id="checkid" name="checkid" lay-verify="true" autocomplete="off" placeholder="" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">借出单号:</label>
+            <div class="layui-input-block">
+                <input type="text" id="rentid" name="rentid" lay-verify="true" autocomplete="off" placeholder="" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-inline">
+                <label class="layui-form-label">检查时间:</label>
+                <div class="layui-input-block">
+                    <input type="text" id="checkdate" name="checkdate" placeholder="请输入归还时间" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-inline">
+                <label class="layui-form-label">存在问题:</label>
+                <div class="layui-input-block">
+                    <input type="text" name="checkproblem" placeholder="请输入存在问题" class="layui-input">
+                </div>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-inline">
+                <label class="layui-form-label">问题描述:</label>
+                <div class="layui-input-block">
+                    <input type="text" name="checkdesc" lay-verify="name" class="layui-input">
+                </div>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-inline">
+                <label class="layui-form-label">检查员:</label>
+                <div class="layui-input-block">
+                    <input type="text" id="admin" name="admin" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <div style="text-align: center">
+                <button type="submit" class="layui-btn layui-btn-warm layui-btn-radius" lay-submit=""
+                        lay-filter="demo1">
+                    <span class="layui-icon">&#xe609;</span>
+                    提交
+                </button>
+                <button type="reset" class="layui-btn layui-btn-normal layui-btn-radius">
+                    <span class="layui-icon">&#x1007;</span>
+                    重置
+                </button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<!--头工具栏-->
+<script type="text/html" id="toolbarDemo">
+    <div class="layui-btn-container">
+        <button class="layui-btn layui-btn-danger layui-btn-sm" lay-event="deleteBatch">批量删除</button>
+    </div>
+</script>
+
+<!--  行工具条  -->
+<script type="text/html" id="barDemo">
+    <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+    <a class="layui-btn layui-btn-xs layui-btn-danger" lay-event="del">删除</a>
+</script>
+
+
+<script type="text/javascript" src="/layui/layui.js"></script>
+
+<script>
+    var tableForm;
+    var time;   //定义全局变量,存放当前时间
+    layui.use(['table', 'form','jquery', 'laydate', 'layer'], function () {
+        var table = layui.table, layer = layui.layer, form = layui.form,$ = layui.$,laydate = layui.laydate;
+        laydate.render({
+            //指定日期input框的id值
+            elem: '#test1',
+            type: 'datetime'
+        });
+
+        laydate.render({
+            //指定日期input框的id值
+            elem: '#test2',
+            type: 'datetime'
+        });
+        laydate.render({
+            //指定日期input框的id值
+            elem: '#checkTime',
+            type: 'datetime'
+        });
+
+
+        tableForm = table.render({
+            elem: '#test'
+            , url: '/busChecks/queryCheck'
+            , defaultToolbar: ['filter', 'exports', 'print']
+            , toolbar:"#toolbarDemo"
+            , title: '检查单列表'
+            , cols: [
+                [
+                    {type: 'checkbox', fixed: 'left'}
+                    , {field: 'checkid', title: '检查单号',width:280, fixed: 'left', align: 'center'}
+                    , {field: 'rentid', title: '借出单号',width:280, fixed: 'left', align: 'center'}
+                    , {field: 'checkproblem', title: '存在问题',width:100, align: 'center'}
+                    , {field: 'checkdesc', title: '问题描述',width:100, align: 'center'}
+                    , {field: 'admin', title: '操作员',width:100, align: 'center'}
+                    , {field: 'checkdate', title: '检查时间', align: 'center'}
+                    , {field: 'createtime', title: '录入时间', align: 'center'}
+                    , {fixed: 'right', title: '操作', toolbar: '#barDemo', align: 'center', width: 200}
+                ]
+            ]
+            , page: true
+            , id: 'dataId' //添加id属性
+        });
+
+
+        //模糊搜索
+        $(".search-submit").click(function () {
+            var param = $("#searchForm").serialize()
+            console.log(param)
+            tableForm.reload({
+                url: "/busChecks/queryCheck?" + param
+                , page: {curr: 1}
+            })
+        })
+
+
+        //提交数据
+        form.on("submit(demo1)", function () {
+            $("#opername").removeAttr("disabled");
+            $("#rentid").removeAttr("disabled");
+            $("#begindate").removeAttr("disabled");
+            $(".identity").removeAttr("disabled");
+            $("#carnumber").removeAttr("disabled");
+            $("#price").removeAttr("disabled");
+            var params = $("#dataForm").serialize();
+            // console.log(params)
+            $.post(layerUrl, params, function (obj) {
+                // console.log(obj.msg)
+                layer.alert(obj.msg,{icon:1})
+                // 关闭弹出层
+                // layer.close(layerIndex)
+                // 刷新表格
+                tableForm.reload();
+            })
+        })
+
+
+        //监听行工具事件
+        table.on('tool(test)', function (obj) {
+            var data = obj.data;
+            if (obj.event === 'edit') {
+                editCheck(data);  //编辑出租单
+            } else if (obj.event === 'del') {
+                layer.confirm("确定删除单号为【"+data.checkid+"】这个检查单吗", function(index){
+                    obj.del(); //删除对应行（tr）的DOM结构，并更新缓存
+                    layer.close(index);
+                    //向服务端发送删除指令
+                    delCheck(data);
+                });
+
+            }
+        });
+
+        //编辑检查单
+        function editCheck(data) {
+            layerIndex = layer.open({
+                type: 1,
+                title: '编辑检查单',
+                content: $('#dataGrip'),
+                area: ['700px', '430px'],
+                success: function () {
+                    //填充数据    data为表格当前行的数据
+                    form.val("dataForm", data)
+                    $("#checkTime").val(data.checkdate);
+                    layerUrl = '/busChecks/updateCheck';
+                }
+            })
+        }
+
+        //删除检查单
+        function delCheck(data){
+            var checkid = data.checkid
+            $.post("/busChecks/deleteCheckById",{checkid:checkid},function(obj) {
+                layer.alert(obj.msg,{icon:1});
+                //重载表格
+                tableForm.reload();
+            })
+        }
+
+
+
+        //头工具栏事件
+        table.on('toolbar(test)', function(obj){
+            var even = obj.event;
+            switch (even) {
+                case 'getAddData':addRole();
+                    break;
+                case 'deleteBatch':deleteBatch();
+                    break;
+            }
+        });
+
+
+        //批量删除
+        function deleteBatch(){
+            //判断是否为空(有无勾选项) 根据table定义的id值获取勾选数量
+            var checkStatus = table.checkStatus('dataId');
+            var data = checkStatus.data;
+            if (data.length == 0){
+                layer.alert('未选中',{icon:0});
+            }else {
+                //获取所选项的id值
+                layer.confirm("你确定删除以下所选项吗",function (index) {
+                    var params;
+                    //jquery遍历      index:索引值  item:数据
+                    $.each(data,function (index,item) {
+                        if (index == 0){
+                            params = "checkids="+item.checkid;
+                        }else {
+                            params = params+"&checkids="+item.checkid;
+                        }
+                    })
+                    //发送ajax请求
+                    $.post('/busChecks/deleteByBatch',params,function (res) {
+                        layer.alert(res.msg,{icon:1});
+                        tableForm.reload();
+                    })
+                })
+            }
+
+
+        }
+
+
+        //查看车辆大图
+        function showBigCar(data) {
+            layerIndex = layer.open({
+                type: 1,
+                title: '【' + data.carnumber + '】的车辆图片',
+                content: '<img src="/carimgs/' + data.carimg + '"style="height:430px;width:727px;padding: 10px;">',
+                area: ['750px', '500px']
+            })
+        }
+
+
+
+
+    });
+
+
+</script>
+</body>
+</html>
+
+

@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <title>学生所在院系性别分布表</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <link rel="stylesheet" href="/layui/css/layui.css" media="all"/>
+</head>
+
+<body class="main_body" style="height:100%;margin-top: 0px">
+
+<form class="layui-form" id="searchForm" style="margin: 30px 10px 0px">
+    <div class="layui-form-item" style="margin-bottom: 0px">
+        <label class="layui-form-label">学生所在地:</label>
+        <div class="layui-input-inline">
+            <input type="text" name="department" placeholder="请输入学生所在地" autocomplete="off" class="layui-input"/>
+        </div>
+        <div class="layui-inline" style="padding-left: 40px">
+            <div class="layui-btn-container">
+                <button type="button" class="layui-btn layui-btn-normal layui-btn-radius search-submit" style="background-color: #5FB878">
+                    <i class="layui-icon layui-icon-search"></i>&ensp;查&ensp;询&ensp;
+                </button>
+                <button type="reset" class="layui-btn layui-btn-warm layui-btn-radius resetBtn" style="background-color: #40AFFE">
+                    <i class="layui-icon layui-icon-refresh"></i>&ensp;清空查询
+                </button>
+            </div>
+        </div>
+    </div>
+</form>
+
+<!-- 为ECharts准备一个具备大小（宽高）的Dom -->
+
+<div id="main" style="width: 800px;height: 600px;"></div>
+
+
+<script type="text/javascript" src="/echarts/echarts.min.js"></script>
+<script type="text/javascript" src="/layui/layui.js"></script>
+<script type="text/javascript" src="/js/jquery-3.2.1.min.js"></script>
+<script type="text/javascript">
+
+    layui.use(['table', 'form', 'layer', 'laydate'], function () {
+        var table = layui.table, $ = layui.$, layer = layui.layer, form = layui.form, laydate = layui.laydate;
+
+        // 基于准备好的dom，初始化echarts实例
+        var myChart = echarts.init(document.getElementById('main'));
+
+        var sex = [];
+
+        $(".search-submit").click(function () {
+            //判断是否为空
+            if ($("input[name = department]").val() != ""){
+                $.get("/char/addressSexCharData?address="+$("input[name = department]").val(),function (res) {
+                    //判断是否存在该地区
+                    if (res.length != 0){
+                        //显示图表
+                        $("#main").css("display","block");
+                        //填装数据
+                        for(var i=0;i<res.length;i++){
+                            sex.push(res[i].name);
+                        }
+                        // 指定图表的配置项和数据
+                        myChart.setOption(            {
+                            title: {
+                                text: '院系学生性别分布表'
+                                ,x: 'center'
+                            },
+                            tooltip: {
+                                trigger: 'item'
+                                , formatter: '{a} :  {b} <br/> {c}人  ({d}%)'
+                            },
+                            legend: {
+                                orient: 'vertical'
+                                , left: 'left'
+                                , data: sex
+                            },
+                            series: [{
+                                name: '学生所在院系',
+                                radius: '55%',
+                                type: 'pie',        //图形形状
+                                data: res
+                            }]
+                        });
+                    }else{
+                        layer.alert("该院系没有学生在本系统使用过!",{icon:0,title:"系统小贴士"});
+                    }
+                })
+            }else{
+                layer.alert("不能为空,请输入地区!",{icon:0,title:"系统小贴士"});
+            }
+
+        });
+
+        //清空查询按钮被点击  隐藏数据
+        $(".resetBtn").click(function () {
+            $("#main").css("display","none");
+        })
+
+    })
+
+
+
+
+
+</script>
+
+
+</body>
+</html>
